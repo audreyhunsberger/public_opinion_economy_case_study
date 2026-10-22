@@ -1,0 +1,116 @@
+# Case Study Plan: Partisanship & Economic Perception
+
+## Executive Summary
+
+How much of what Americans say about "the economy" is about the economy, and how much is about who holds the White House?
+
+The plan is to use independents and personal-finance questions as two built-in "reality checks" to separate the partisan component of economic perception from the fundamentals, then test whether either one shows up in what households do.
+
+## Problem Framing and Research Questions
+
+| RQ# | Question | Hypothesis |
+| --- | --- | --- |
+| RQ1 | How much do economic ratings shift when the president's party changes? | Ratings swing sharply toward the incoming president's party within weeks, with no matching change in fundamentals |
+| RQ2 | After removing partisanship, do perceptions still track fundamentals? | Independents' ratings (and the common year effect) move with unemployment, inflation and real earnings |
+| RQ3 | Is partisanship weaker for people's own finances than for "the economy"? | The partisan gap on personal finances is smaller than on the national economy |
+| RQ4 | Do partisan swings in sentiment show up in household behavior? | Aggregate saving and borrowing move with fundamentals, not with partisan sentiment |
+
+## Data 
+
+The repo has survey sources as well as economic indicators.
+
+### Surveys (Perception Side)
+
+| Source | Coverage since 2016 | Key items | Strength | Limitation |
+| --- | --- | --- | --- | --- |
+| CES cumulative (feather) | 10 annual waves, 718k respondents 2006–2025; \~17k–65k/yr | `economy_retro` (5-pt, past year), `pid3_leaner`, `investor`, `faminc`, `county_fips`, `starttime` | Huge N, every year, geography down to county | Opt-in YouGov panel; no design variables; only one economy item; fielded Sep–Nov (even yrs) vs Nov–Dec (odd yrs) |
+| ANES cumulative (parquet) | 3 waves: 2016, 2020, 2024; \~4k–8k each | `VCF0870` national retro, `VCF0880` personal finances, `VCF0872/0881` prospective, `VCF9009` econ approval, `VCF9224` stock owner | Probability sample; national AND personal items; strata/PSU for design-based SEs | Only election years, so no post-transition wave; mode shifts (FTF to web) |
+| Pew (csv) | 28 polls, Nov 2016–Oct 2026 | % rating economy excellent/good, by party (with leaners) | Brackets every inauguration; current to this month | Toplines only, no microdata, no SEs in file; irregular spacing |
+
+### Economic Series (Fundamentals Side)
+
+| Series | Frequency | Use | Caution |
+| --- | --- | --- | --- |
+| Misery index | Monthly | Headline fundamentals benchmark | Composite; decompose into unemployment and inflation too |
+| CPI: all items, core, food at home, gasoline, shelter (SA) | Monthly | Salience test: visible prices (gas, groceries) vs core | Levels trend; analyze YoY changes |
+| Real avg hourly earnings, real median weekly earnings | Monthly / quarterly | "Am I keeping up?" measure | Composition effects (2020 spike was job losses among low earners) |
+| Personal saving rate (two files) | Monthly / quarterly | RQ4 behavior proxy | Same concept twice: keep monthly `PSAVERT`; heavily revised by BEA |
+| Debt service ratio | Quarterly | RQ4 behavior proxy | Slow-moving |
+| Mortgage, auto, credit card rates | Weekly / quarterly | Cost-of-credit context | Auto and card files have blank months (quarterly releases); never forward-fill silently |
+| S&P 500, Dow, Nasdaq | Daily | Investor vs non-investor sensitivity | Nominal price indices, not total return |
+
+### Additional Data
+
+| Source | Coverage | Use | Caution |
+| --- | --- | --- | --- |
+| `consumer_sentiment_by_party.csv` (UMich) | Monthly, Apr 2017 – Aug 2026 (113 months); Republican, Democrat, Independent index | **Primary RQ1 series.** Monthly resolution lets the flip be dated to the month, and it covers the 2021 and 2025 transitions | Starts after the Jan 2017 transition, so 2016→17 rests on Pew and CES only. No standard errors in the file; subgroup monthly samples are far smaller than the full sample (confirm in UMich methodology) |
+| `umich_consumer_sentiment_index_data.csv` | Monthly, Jan 2016 – Aug 2026 (128 months, none missing); \~500 columns by age, region, income, education | Full-sample sentiment, current conditions and expectations subindices, year-ahead price expectations (`px1_*`), gas expectations, buying conditions for homes and vehicles | No party split; demographic subgroups only. Use the codebook PDF for variable definitions |
+| `real_personal_cons_exp.csv` (`PCEC96`) | Monthly, Jan 2007 – Aug 2026 | The "do" side of RQ4: real spending, in chained dollars | Seasonally adjusted and revised; aggregate only |
+| `inauguration_election_dates.csv` | 7 election–inauguration pairs, 2000–2024, with president and party | Event dates for every event study; lets the design test which date the flip follows | N/A |
+| `monthly_inflation_rates_2000_2026.csv` | Monthly, Jan 2000 – Sep 2026 (320 rows) | Actual inflation: the benchmark for the fundamentals-at-transitions check (RQ1), expected vs. actual inflation (RQ2), and the 2008–09 baseline back to 2000 | Year-over-year CPI; matches cpi_data.csv all items within 0.2 pt. October 2025 is missing, so do not interpolate silently |
+
+## Assumptions
+
+- Within a survey year, all respondents face the same national economy
+- Independents are the best available "neutral" benchmark
+- Party ID is stable enough to group by over 2016–2025
+- "Better/worse" items are comparable across years and sources
+- Respondents react to economic conditions with a short lag
+
+## Analytical Design
+
+### Outcome Coding (Shared Across RQs)
+
+- **Primary:** binary "better" (much/somewhat better) and "worse" (much/somewhat worse), plus net rating = % better − % worse. Easy to explain, robust to scale-use differences.
+- **Robustness:** 5-point mean score and an ordered logit, to show the binary cut isn't hiding anything.
+- **Party:** 3 groups with leaners assigned to parties in all three sources (CES pid3_leaner, ANES VCF0303, Pew Rep/Lean Rep and Dem/Lean Dem), so the groups mean the same thing everywhere.
+- **Missing codes:** ANES 0/8/9/−8/−9 and blanks set to missing; CES 6 ("not sure") reported separately and excluded in the main spec.
+
+### RQ1: How much do economic ratings shift when the president's party changes?
+
+1. **Descriptive:** weighted % better/worse by party × year (CES) and the Pew series with inauguration dates marked.
+2. **Model:** a pooled, weighted linear probability model on CES respondents, 2016–2025:
+
+$$
+\text{Better}_{it} = \alpha_t + \beta_1 \text{Rep}_i + \beta_2 \text{Dem}_i + \beta_3 \text{CoPartisan}_{it} + \gamma' X_{it} + \delta_s + \varepsilon_{it}
+$$
+
+Year fixed effects (α) absorb everything national in a given year, including the economy itself. So β3, the "co-partisan premium," is identified only from the flips in who holds the White House. X = age, education, income, race, gender, homeownership, employment; δ = state. A second spec splits β3 by party to test asymmetry.
+
+3. **Inference:** CES has no design variables, so heteroskedasticity-robust SEs with weights, plus state-clustered SEs as the conservative bound. Logit average marginal effects as a check.
+4. **Which transitions count:** 2016→2017 and 2024→2025 are the clean comparisons. 2020→2021 is reported but flagged, because COVID moved fundamentals at the same time.
+5. **Pew event windows:** last poll before vs first poll after each inauguration, as a difference-in-differences of party shares. Sample sizes per poll come from Pew's methodology pages to compute SEs; until then it stays descriptive.
+
+**Monthly event study with the UMich party series.** For the 2021 and 2025 transitions, index each party's sentiment to its average over the three months before the election and plot months −3 to +9 around both event dates. Primary estimand: the share of each party's total swing (pre-election level to six months after inauguration) that is complete in the election month and in the inauguration month, with a bootstrap interval. Independents are the benchmark. The series starts in April 2017, so January 2017 stays with Pew and CES. The file has no standard errors, so noise is judged from the pre-event window.
+
+**Fundamentals check.** For every transition, tabulate inflation and unemployment (misery index minus inflation) in the pre-election months, the election month, the inauguration month and six months after. If the fundamentals did not move while party sentiment did, the swing is a perception shift; if they did, the transition is flagged like 2020–21 was for COVID. The inflation file reaches back to 2000, so the 2008–09 transition can be tabulated too once UMich history is added.
+
+### RQ2: After removing partisanship, do perceptions still track fundamentals?
+
+1. Pull the year effects (α) from the RQ1 model and independents' net rating as two estimates of the "non-partisan" component.
+2. Correlate their year-over-year changes with changes in unemployment, CPI inflation (headline, gas, food at home, shelter) and real earnings, measured in the 3 months before each fieldwork window.
+3. **Honesty about power:** that is 10 annual points. It is reported as descriptive with bootstrap intervals, and no lag or component is chosen by searching. The gas-vs-core salience comparison is pre-specified as one contrast.
+4. **Exploratory:** CES starttime gives day-level variation within each ~6-week fieldwork window, which can be matched to daily stock indices. Labeled exploratory in any write-up.
+5. **Perceived vs. actual inflation (the original idea):** UMich year-ahead price expectations (px1_mean_all, plus age and income subgroups) against realized CPI inflation from cpi_data.csv, with gas expectations (gas1px_mean_all) against the gasoline CPI. This tests whether the visible-price channel (gas, groceries) explains the gap better than core inflation. Headline realized inflation is the new monthly inflation file. The median expectation is primary, since the mean exceeds actual inflation in 89% of months and the median in 67%.
+
+### RQ3: Is partisanship weaker for people's own finances than for "the economy"?
+
+1. For each ANES year: partisan gap on national economy (VCF0870) and on own finances (VCF0880), each = % worse among out-party − % worse among in-party. Report the difference and the ratio.
+2. Design-based SEs using ANES strata (VCF0010z), PSUs (VCF0011z) and weights (VCF0009z), with a bootstrap for the ratio.
+3. Control for income, employment, recent layoff (VCF0156) and homeownership, since a real income realignment between parties could create a genuine pocketbook gap.
+
+### RQ4: Do partisan swings in sentiment show up in household behavior? 
+
+1. **Public data (aggregate):** monthly event-study plots of the party sentiment series vs. real PCE growth (PCEC96), saving rate and debt service around each election and inauguration. This can show whether behavior broke with sentiment, but cannot separate partisans, so it is framed as context.
+
+## Gaps and Threats to Validity
+
+- **Partisans live in different local economies:** Republicans and Democrats tend to differ in income, region and industry, so their "real" economy may differ
+- **Expressive responding ("cheerleading") vs. sincere belief:** Respondents may answer to signal team loyalty, not report beliefs
+- **Data revisions:** Saving rate and PCE are revised for years after data releases
+- **Spurious time-series correlation:** Trending series correlate by accident
+- **Mode changes:** Surveys (especially ANES) have evolved from mixed face-to-face and web to overwhelmingly web
+
+## Pipeline and Reproducibility
+
+Ideally, I'd be using tools like dbt cloud to have a true pipeline; however, to make this easier on me, I'm going to use Databricks and Jupyter Notebook. 
