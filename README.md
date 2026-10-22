@@ -19,6 +19,7 @@ commercial_interest_rate_on_credit_card_plans.csv | Commercial Bank Interest Rat
 DJIA.csv | Dow Jones Industrial Average ([DJIA]([url](https://fred.stlouisfed.org/series/DJIA))), S&P Dow Jones Indices LLC via FRED® |
 NASDAQCOM.csv | NASDAQ Composite ([NASDAQCOM]([url](https://fred.stlouisfed.org/series/NASDAQCOM))), Nasdaq, Inc. via FRED® |
 SP500.csv | S&P 500 ([SP500]([url](https://fred.stlouisfed.org/series/SP500))), S&P Dow Jones Indices LLC via FRED® |
+real_personal_cons_exp.csv | Real Personal Consumption Expenditures ([PCEC96]([url](https://fred.stlouisfed.org/series/PCEC96))), U.S. Bureau of Economic Analysis via FRED® | 
 consumer_sentiment_by_party.csv | [Index]([url](https://data.sca.isr.umich.edu/charts.php)) of Consumer Sentiment Within Political Party, University of Michigan Surveys of Consumers |
 umich_consumer_sentiment_index_data.csv | UMich Surveys of Consumers data, [index scores]([url](https://data.sca.isr.umich.edu/subset/subset.php)) (percent favorable - percent unfavorable + 100). | 
 inauguration_election_dates.csv | Hand-built table of presidential inauguration and election dates, with parties, since 2000 |
