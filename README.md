@@ -8,3 +8,4 @@ pew_economy_rating_by_party | Data comes from [Pew Research's statistics]([url](
 cumulative_2006-2025_zstd.feather | Data comes from the [Cooperative Election Study (CES)]([url](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910%2FDVN%2FII2DB6)), which includes select standardized variables including demographics, geography, vote choice, validated vote, representative approval, and views on the economy from 2006 to 2025. By far the most comprehensive and detailed dataset in this analysis. |
 anes_cdf.parquet | The ANES Time Series Cumulative [Data File]([url](https://electionstudies.org/data-center/anes-time-series-cumulative-data-file/)). |
 cpi_data.csv | Contains BLS [Consumer Price Index (CPI) data]([url](https://data.bls.gov/dataQuery/search)) for important goods |
+codebook_short_guide.csv | A table of important ANES and CCES variables. |
