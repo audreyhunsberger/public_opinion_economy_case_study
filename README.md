@@ -9,3 +9,13 @@ cumulative_2006-2025_zstd.feather | Data comes from the [Cooperative Election St
 anes_cdf.parquet | The ANES Time Series Cumulative [Data File]([url](https://electionstudies.org/data-center/anes-time-series-cumulative-data-file/)). |
 cpi_data.csv | Contains BLS [Consumer Price Index (CPI) data]([url](https://data.bls.gov/dataQuery/search)) for important goods |
 codebook_short_guide.csv | A table of important ANES and CCES variables. |
+employed_fulltime_median_usual_weekly_real_earnings.csv
+personal_saving_as_percent_of_disposable_income.csv | Personal saving as a percentage of disposable personal income ([A072RC1Q156SBEA]([url](https://fred.stlouisfed.org/series/A072RC1Q156SBEA))), U.S. Bureau of Economic Analysis via FRED® |
+personal_saving_rate.csv | Personal Saving Rate ([PSAVERT]([url](https://fred.stlouisfed.org/series/PSAVERT))), U.S. Bureau of Economic Analysis via FRED® |
+household_debt_service_payments_as_percent_of_disposable_personal_income.csv | Household Debt Service Payments as a Percent of Disposable Personal Income ([TDSP]([url](https://fred.stlouisfed.org/series/TDSP))),  Board of Governors of the Federal Reserve System |
+30year_fixed_mortgage_rate.csv | 30-Year Fixed Rate Mortgage Average in the United States ([MORTGAGE30US]([url](https://fred.stlouisfed.org/series/MORTGAGE30US))), Freddie Mac via FRED® |
+commercial_interest_rate_on_credit_card_plans.csv | Commercial Bank Interest Rate on Credit Card Plans, All Accounts ([TERMCBCCALLNS]([url](https://fred.stlouisfed.org/series/TERMCBCCALLNS))), Board of Governors of the Federal Reserve System (US) via FRED® |
+48_month_auto_loan_rates.csv | Finance Rate on Consumer Installment Loans at Commercial Banks, New Autos 48 Month Loan ([TERMCBAUTO48NS]([url](https://fred.stlouisfed.org/series/TERMCBAUTO48NS))), Board of Governors of the Federal Reserve System (US) via FRED® |
+DJIA.csv | Dow Jones Industrial Average ([DJIA]([url](https://fred.stlouisfed.org/series/DJIA))), S&P Dow Jones Indices LLC via FRED® }
+NASDAQCOM.csv | NASDAQ Composite ([NASDAQCOM]([url](https://fred.stlouisfed.org/series/NASDAQCOM))), Nasdaq, Inc. via FRED® |
+SP500.csv | S&P 500 ([SP500]([url](https://fred.stlouisfed.org/series/SP500))), S&P Dow Jones Indices LLC via FRED® |
