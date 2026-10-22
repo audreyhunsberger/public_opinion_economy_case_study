@@ -21,3 +21,4 @@ NASDAQCOM.csv | NASDAQ Composite ([NASDAQCOM]([url](https://fred.stlouisfed.org/
 SP500.csv | S&P 500 ([SP500]([url](https://fred.stlouisfed.org/series/SP500))), S&P Dow Jones Indices LLC via FRED® |
 consumer_sentiment_by_party.csv | [Index]([url](https://data.sca.isr.umich.edu/charts.php)) of Consumer Sentiment Within Political Party, University of Michigan Surveys of Consumers |
 umich_consumer_sentiment_index_data.csv | UMich Surveys of Consumers data, [index scores]([url](https://data.sca.isr.umich.edu/subset/subset.php)) (percent favorable - percent unfavorable + 100). | 
+inauguration_election_dates.csv | Hand-built table of presidential inauguration and election dates, with parties, since 2000 |
