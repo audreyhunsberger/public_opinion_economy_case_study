@@ -17,6 +17,7 @@ economic data, 2016–2026. The full story can be found on the "report" pdf.
 - data: Raw source files plus codebooks
 - notebooks: The pipeline, run in order from 01 to 06
 - plan: The analysis plan written before the work began
+- .databricks: Stuff from Databricks (where the project was completed)
 
 ## Pipeline
 
